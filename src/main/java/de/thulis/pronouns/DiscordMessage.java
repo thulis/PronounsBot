@@ -3,7 +3,6 @@ package de.thulis.pronouns;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -21,19 +20,12 @@ public class DiscordMessage extends ListenerAdapter {
         this.cmdPrefix = config.prefix;
     }
 
-    /*// probably doesn't work that well if used on mulitple servers
-    @Override
-    public void onReady(ReadyEvent event) {
-        this.roles = event.getJDA().getRoles();
-        System.out.println(roles);
-    }*/
-
     private Role getRoleByName(String name, List<Role> roles) {
-        for (Role r : roles) {
+        /* for (Role r : roles) {
             if(r.getName().compareTo(name) == 0) return r;
-            //System.out.println(r.getName());
-            //System.out.println("Role: \"" + r.getName() + "\", compareTo: " + r.getName().compareTo(name));
-        }
+            System.out.println("Role: \"" + r.getName() + "\", compareTo: " + r.getName().compareTo(name));
+        } */
+        for (Role r : roles) if (r.getName().compareTo(name) == 0) return r;
         return null;
     }
 
@@ -47,6 +39,13 @@ public class DiscordMessage extends ListenerAdapter {
         switch(messageSplit[0].trim()) {
             case "!list":
                 break;
+            case "!change":
+                Member authorC = event.getMember();
+                if(authorC == null) return;
+                Role roleIdC = getRoleByName(messageSplit[2].trim(), server.getRoles());
+                if(roleIdC == null) return;
+                server.removeRoleFromMember(authorC, roleIdC).queue();
+                // expected fallthrough
             case "!add":
                 Member author = event.getMember();
                 if(author == null) return;
@@ -61,21 +60,11 @@ public class DiscordMessage extends ListenerAdapter {
                 if(roleIdR == null) return;
                 server.removeRoleFromMember(authorR, roleIdR).queue();
                 break;
-            case "!change":
-                Member authorC = event.getMember();
-                if(authorC == null) return;
-                Role roleIdC = getRoleByName(messageSplit[1].trim(), server.getRoles());
-                Role newRole = getRoleByName(messageSplit[2].trim(), server.getRoles());
-                if(roleIdC == null || newRole == null) return;
-                server.removeRoleFromMember(authorC, roleIdC).queue();
-                server.addRoleToMember(authorC, newRole).queue();
-                break;
             case "!ADD":
                 // TODO: check that messageSplit actually contains >1 element
                 // role already exists
                 Role r = getRoleByName(messageSplit[1].trim(), server.getRoles());
                 if (r != null) return;
-                System.out.println("Found a role: " + r);
                 server.createRole().queue(role -> {
                       role.getManager().setName(messageSplit[1].trim())
                                        .setMentionable(true).queue();
