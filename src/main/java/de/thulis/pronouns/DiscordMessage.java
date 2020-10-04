@@ -68,14 +68,18 @@ public class DiscordMessage extends ListenerAdapter {
                 Role newRole = getRoleByName(messageSplit[2].trim(), server.getRoles());
                 if(roleIdC == null || newRole == null) return;
                 server.removeRoleFromMember(authorC, roleIdC).queue();
-                server.addRoleToMember(authorC, newRole);
+                server.addRoleToMember(authorC, newRole).queue();
                 break;
             case "!ADD":
                 // TODO: check that messageSplit actually contains >1 element
-                server.createRole()
-                      .setName(messageSplit[1].trim())
-                      .setMentionable(true)
-                      .queue();
+                // role already exists
+                Role r = getRoleByName(messageSplit[1].trim(), server.getRoles());
+                if (r != null) return;
+                System.out.println("Found a role: " + r);
+                server.createRole().queue(role -> {
+                      role.getManager().setName(messageSplit[1].trim())
+                                       .setMentionable(true).queue();
+                });
                 break;
             case "!REMOVE":
                 break;
