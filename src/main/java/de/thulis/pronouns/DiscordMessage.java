@@ -62,7 +62,7 @@ public class DiscordMessage extends ListenerAdapter {
                 Role roleId = getRoleByName(messageSplit[1].trim(), server.getRoles());
                 if(roleId == null) {
                     event.getChannel()
-                            .sendMessage("Couldn't find role \"" + messageSplit[1].trim() + "\". You can add it with the command \"!add " + messageSplit[1].trim()+"\"").queue();
+                            .sendMessage("Couldn't find role \"" + messageSplit[1].trim() + "\". You can add it with the command \"!ADD " + messageSplit[1].trim()+"\"").queue();
                     return;
                 }
                 if (roleId.getName().equals("Admin")) {
