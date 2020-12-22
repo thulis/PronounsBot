@@ -1,0 +1,5 @@
+general:
+  token: "HENLO"
+  prefix: "!"
+commands:
+  help: "Text to be displayed when issuing the `help` command."

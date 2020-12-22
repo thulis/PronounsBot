@@ -1,0 +1,10 @@
+[package]
+name = "pronouns_bot"
+version = "0.1.0"
+authors = ["Max Nerius <mnerius@gmx.de>"]
+edition = "2018"
+
+[dependencies]
+yaml-rust = "0.4"
+serenity = "0.9"
+tokio = { version = "0.2", features = ["macros"] }
